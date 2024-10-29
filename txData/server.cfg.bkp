@@ -1,0 +1,85 @@
+# __      ______  _____  _____  
+# \ \    / / __ \|  __ \|  __ \ 
+#  \ \  / / |  | | |__) | |__) |
+#   \ \/ /| |  | |  _  /|  ___/ 
+#    \  / | |__| | | \ \| |     
+#     \/   \____/|_|  \_\_|     
+#
+# server.cfg docs: https://aka.cfx.re/server-commands
+# VORP support: https://discord.gg/DHGVAbCj7N
+
+## You CAN edit the following:
+endpoint_add_tcp "0.0.0.0:30120"
+endpoint_add_udp "0.0.0.0:30120"
+sv_licenseKey "cfxk_1k4JLFIuT8wBQU76JjiwI_3VKpWL"
+sv_maxclients 48
+sv_enforceGameBuild 1491 #September 2022 update
+set gamename rdr3
+set steam_webApiKey "FBB39F1BA132B4824E7571754ED215CF"
+set mysql_connection_string "mysql://root@localhost/VORPCore_1FE09B?charset=utf8mb4"
+set mysql_slow_query_warning 200    # to only show warnings above 700
+load_server_icon icon.png  #REPLACE the icon.png found in the folder to your logo 96x96
+sets tags "roleplay, western, bandits"
+set txAdmin-menuPtfxDisable true
+## You SHOULD edit the following:
+sv_hostname "gritandglory built with Grit & Glory!"
+sets sv_projectName "[Grit & Glory] gritandglory"
+sets sv_projectDesc "Under Development."
+sets locale "root-AQ" # change to your language (eg. en-US, pt-BR, de-DE)
+set resources_useSystemChat true #chat resource is now found within the artifacts
+
+## These resources will start by default.
+ensure mapmanager
+ensure chat
+ensure spawnmanager
+ensure sessionmanager-rdr3
+ensure redm-map-one
+ensure hardcap
+
+ensure oxmysql
+ensure weathersync
+ensure interiors
+ensure syn_minigame
+
+ensure vorp_menu
+exec resources/[VORP]/[essentials]/weathersync/permissions.cfg
+exec resources/[VORP]/vorp_admin/vorp_perms.cfg
+
+## VORP Resources
+ensure vorp_core
+ensure vorp_inputs
+ensure vorp_progressbar
+ensure vorp_inventory
+ensure vorp_character
+ensure vorp_utils
+ensure vorp_admin
+ensure vorp_metabolism
+ensure vorp_barbershop
+ensure vorp_postman
+ensure vorp_hunting
+ensure vorp_stables
+ensure vorp_weaponsv2
+ensure vorp_stores
+ensure vorp_fishing
+ensure vorp_housing
+ensure vorp_banking
+ensure vorp_mailbox
+ensure vorp_walkanim
+ensure vorp_police
+ensure vorp_crafting
+ensure vorp_zonenotify
+#ensure vorp_traffic -- will limitate peds and animals
+#ensure vorp_radius -- culling
+ensure vorp_mining
+ensure vorp_lumberjack
+ensure vorp_animations
+ensure vorp_outlaws
+ensure vorp_crawfish
+ensure vorp_medic
+
+## Add system admins
+add_ace group.admin command allow # allow all commands
+add_ace group.admin command.quit deny # but don't allow quit
+add_principal identifier.fivem:2380218 group.admin #KSUIE_Gaming
+add_principal identifier.discord:791049886216880138 group.admin #KSUIE_Gaming
+

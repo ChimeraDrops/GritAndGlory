@@ -13,11 +13,31 @@ Config.AllowPlayerDeleteCharacter = true
 
 -- after creating character player will spawn here
 Config.SpawnCoords = {
-    position = vector3(-67.27, -392.34, 71.79),
-    heading = 171.98
+    { -- BLW
+        position = vector3(-687.3, -1242.249, 43.1),
+        heading = 90.58
+    },
+    { -- RHO
+        position = vector3(1227.77, -1304.7, 76.95),
+        heading = 140.49
+    },
+    { -- Emerald
+        position = vector3(1526.07, 444.58, 90.73),
+        heading = 265.95
+    },
+    { -- VAL
+        position = vector3(-174.3, 621.18, 114.08),
+        heading = 240.38
+    },
+    { -- Flatneck
+        position = vector3(-330.5, -350.76, 88.09),
+        heading = 20.96
+    },
 }
 
-Config.ShowGold = true -- this will show gold next to money in character selection
+Config.ShowGold = false    -- this will show gold next to money in character selection
+
+Config.showchardesc = true -- set false to not show character description on selction menu
 
 Config.Webhook = {
     deleteCharacter = ''
@@ -909,13 +929,14 @@ Config.keys = {
     prompt_create = { key = 0x9959A6F0 },                           -- [ C ]
     prompt_delete = { key = 0x3F4DC0EF },                           -- [ DELETE ]
     prompt_swap = { key = 0xA65EBAB4 },                             -- [ LEFT ARROW ]
-    prompt_select = { key = 0xC7B5340A },                           -- [ NUM ENTER ]
+    prompt_select = { key = 0xCEFD9220 },                           -- [ NUM ENTER ]
     prompt_choose_gender_M = { key = 0xA65EBAB4 },                  -- [ LEFT ARROW  ]
     prompt_choose_gender_F = { key = 0xDEB34313 },                  -- [ RIGHT ARROW ]
     prompt_select_gender = { key = 0xD9D0E1C0 },                    -- [ SPACE ]
     prompt_camera_ws = { key = 0x8FD015D8, key2 = 0xD27782E3 },     -- [ W ] and [ S ]
     prompt_camera_rotate = { key = 0x7065027D, key2 = 0xB4E465B4 }, -- [ A ] and [ D ]
     prompt_zoom = { key = 0x8BDE7443, key2 = 0x62800C92 },          -- [ MOUSE SCROLL DOWN ] and [ MOUSE SCROLL UP ]
+    prompt_Back = { key = 0x156F7119 }                              -- [ BACKSPACE ]
 }
 
 Config.commands = {
@@ -2083,6 +2104,7 @@ Config.FaceFeatures = {
         ["Eyelid Left O/Close"] = { hash = 52902, comp = "EyeLidL" },
         ["Eyelid Right O/Close"] = { hash = 22421, comp = "EyeLidR" },
     },
+
     ears = {
         ["Ears Width"] = { hash = 0xC04F, comp = "EarsW" },
         ["Ears Angle"] = { hash = 0xB6CE, comp = "EarsA" },

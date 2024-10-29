@@ -1,67 +1,65 @@
----@diagnostic disable: undefined-global
-
-local PromptGroup  = GetRandomIntInRange(0, 0xffffff)
+local PromptGroup <const> = GetRandomIntInRange(0, 0xffffff)
 local DeletePrompt
 local SelectPrompt
 local GoBackPrompt
-local selectedChar = 1
-local myChars      = {}
-local textureId    = -1
+local selectedChar        = 1
+local myChars             = {}
+local textureId           = -1
 local MaxCharacters
 local mainCam
 local LastCam
 local random
-local canContinue  = false
+local canContinue         = false
 local MalePed
 local FemalePed
-local MenuData     = exports.vorp_menu:GetMenuData()
-
---GLOBALS
-Core               = exports.vorp_core:GetCore()
-Custom             = nil
-Peds               = {}
-CachedSkin         = {}
-CachedComponents   = {}
-T                  = Translation.Langs[Lang]
+local MenuData            = exports.vorp_menu:GetMenuData()
+Core                      = exports.vorp_core:GetCore()
+Custom                    = nil
+Peds                      = {}
+CachedSkin                = {}
+CachedComponents          = {}
+T                         = Translation.Langs[Lang]
+Resolution                = {
+	width = 0,
+	height = 0
+}
 
 --PROMPTS
 CreateThread(function()
 	local str = T.PromptLabels.promptdeleteCurrent
-	DeletePrompt = PromptRegisterBegin()
-	PromptSetControlAction(DeletePrompt, Config.keys.prompt_delete.key)
-	str = CreateVarString(10, 'LITERAL_STRING', str)
-	PromptSetText(DeletePrompt, str)
-	PromptSetEnabled(DeletePrompt, true)
-	PromptSetVisible(DeletePrompt, true)
-	PromptSetStandardMode(DeletePrompt, true)
-	PromptSetGroup(DeletePrompt, PromptGroup)
-	Citizen.InvokeNative(0xC5F428EE08FA7F2C, DeletePrompt, true)
-	PromptRegisterEnd(DeletePrompt)
+	DeletePrompt = UiPromptRegisterBegin()
+	UiPromptSetControlAction(DeletePrompt, Config.keys.prompt_delete.key)
+	str = VarString(10, 'LITERAL_STRING', str)
+	UiPromptSetText(DeletePrompt, str)
+	UiPromptSetEnabled(DeletePrompt, true)
+	UiPromptSetVisible(DeletePrompt, true)
+	UiPromptSetHoldMode(DeletePrompt, 5000)
+	UiPromptSetGroup(DeletePrompt, PromptGroup, 0)
+	UiPromptRegisterEnd(DeletePrompt)
 
 	str = T.PromptLabels.promptselectConfirm
-	SelectPrompt = PromptRegisterBegin()
-	PromptSetControlAction(SelectPrompt, 0xDEB34313)
-	str = CreateVarString(10, 'LITERAL_STRING', str)
-	PromptSetText(SelectPrompt, str)
-	PromptSetEnabled(SelectPrompt, true)
-	PromptSetVisible(SelectPrompt, true)
-	PromptSetStandardMode(SelectPrompt, true)
-	PromptSetGroup(SelectPrompt, PromptGroup)
-	Citizen.InvokeNative(0xC5F428EE08FA7F2C, SelectPrompt, true)
-	PromptRegisterEnd(SelectPrompt)
+	SelectPrompt = UiPromptRegisterBegin()
+	UiPromptSetControlAction(SelectPrompt, Config.keys.prompt_select.key)
+	str = VarString(10, 'LITERAL_STRING', str)
+	UiPromptSetText(SelectPrompt, str)
+	UiPromptSetEnabled(SelectPrompt, true)
+	UiPromptSetVisible(SelectPrompt, true)
+	UiPromptSetStandardMode(SelectPrompt, true)
+	UiPromptSetGroup(SelectPrompt, PromptGroup, 0)
+	UiPromptRegisterEnd(SelectPrompt)
 
 	str = T.PromptLabels.promptback
-	GoBackPrompt = PromptRegisterBegin()
-	PromptSetControlAction(GoBackPrompt, 0x760A9C6F)
-	str = CreateVarString(10, 'LITERAL_STRING', str)
-	PromptSetText(GoBackPrompt, str)
-	PromptSetEnabled(GoBackPrompt, true)
-	PromptSetVisible(GoBackPrompt, true)
-	PromptSetStandardMode(GoBackPrompt, true)
-	PromptSetGroup(GoBackPrompt, PromptGroup)
-	Citizen.InvokeNative(0xC5F428EE08FA7F2C, GoBackPrompt, true)
-	PromptRegisterEnd(GoBackPrompt)
+	GoBackPrompt = UiPromptRegisterBegin()
+	UiPromptSetControlAction(GoBackPrompt, Config.keys.prompt_Back.key)
+	str = VarString(10, 'LITERAL_STRING', str)
+	UiPromptSetText(GoBackPrompt, str)
+	UiPromptSetEnabled(GoBackPrompt, true)
+	UiPromptSetVisible(GoBackPrompt, true)
+	UiPromptSetStandardMode(GoBackPrompt, true)
+	UiPromptSetGroup(GoBackPrompt, PromptGroup, 0)
+	UiPromptRegisterEnd(GoBackPrompt)
 end)
+
 
 --EVENTS
 RegisterNetEvent("vorpcharacter:spawnUniqueCharacter", function(myChar)
@@ -137,8 +135,44 @@ end)
 local function LoadFaceFeatures(ped, skin)
 	for key, value in pairs(Config.FaceFeatures) do
 		for label, v in pairs(value) do
-			if skin[v.comp] and skin[v.comp] > 0 then
+			if skin[v.comp] and skin[v.comp] ~= 0 then
 				SetCharExpression(ped, v.hash, skin[v.comp])
+			end
+		end
+	end
+end
+
+local function ApplyAllComponents(category, value, ped, set)
+	if value.comp == -1 then
+		return
+	end
+
+	local status = not set and "false" or GetResourceKvpString(tostring(value.comp))
+	if status == "true" then
+		return RemoveTagFromMetaPed(Config.HashList[category])
+	end
+
+	ApplyShopItemToPed(value.comp, ped)
+
+	if category ~= "Boots" then
+		UpdateShopItemWearableState(ped, `base`)
+	end
+
+	Citizen.InvokeNative(0xAAB86462966168CE, ped, 1)
+	UpdatePedVariation(ped)
+	IsPedReadyToRender(ped)
+
+	if (value.tint0 ~= 0 or value.tint1 ~= 0 or value.tint2 ~= 0) and value.palette ~= 0 then
+		local TagData = GetMetaPedData(category == "Boots" and "boots" or category, ped)
+		if TagData then
+			local palette = (value.palette ~= 0) and value.palette or TagData.palette
+			SetMetaPedTag(ped, TagData.drawable, TagData.albedo, TagData.normal, TagData.material, palette, value.tint0, value.tint1, value.tint2)
+			if IsPedAPlayer(ped) and CachedComponents[category] then
+				CachedComponents[category].drawable = TagData.drawable
+				CachedComponents[category].albedo = TagData.albedo
+				CachedComponents[category].normal = TagData.normal
+				CachedComponents[category].material = TagData.material
+				CachedComponents[category].palette = palette
 			end
 		end
 	end
@@ -146,35 +180,10 @@ end
 
 function LoadComps(ped, components, set)
 	for category, value in pairs(components) do
-		if value.comp ~= -1 then
-			local status = not set and "false" or GetResourceKvpString(tostring(value.comp))
-			if status == "true" then
-				RemoveTagFromMetaPed(Config.HashList[key])
-			else
-				ApplyShopItemToPed(value.comp, ped)
-				if category ~= "Boots" then
-					UpdateShopItemWearableState(ped, `base`)
-				end
-				Citizen.InvokeNative(0xAAB86462966168CE, ped, 1)
-				UpdatePedVariation(ped)
-				IsPedReadyToRender(ped)
-				if value.tint0 ~= 0 and value.tint1 ~= 0 and value.tint2 ~= 0 and value.palette ~= 0 then -- cannot be 0 or it will apply 0 and mess up the colors
-					local TagData = GetMetaPedData(category == "Boots" and "boots" or category, ped)
-					if TagData then
-						local palette = (value.palette ~= 0) and value.palette or TagData.palette
-						SetMetaPedTag(ped, TagData.drawable, TagData.albedo, TagData.normal, TagData.material, palette, value.tint0, value.tint1, value.tint2)
-						if IsPedAPlayer(ped) and CachedComponents[category] then
-							CachedComponents[category].drawable = TagData.drawable
-							CachedComponents[category].albedo = TagData.albedo
-							CachedComponents[category].normal = TagData.normal
-							CachedComponents[category].material = TagData.material
-							CachedComponents[category].palette = palette
-						end
-					end
-				end
-			end
-		end
+		ApplyAllComponents(category, value, ped, set)
 	end
+	ApplyAllComponents("Shirt", components.Shirt, ped, set)
+	ApplyAllComponents("Vest", components.Vest, ped, set)
 end
 
 function LoadAll(gender, ped, pedskin, components, set)
@@ -205,8 +214,8 @@ end
 local function LoadCharacterSelect(ped, skin, components)
 	local gender = skin.sex == "mp_male" and "Male" or "Female"
 	LoadAll(gender, ped, skin, components, false)
-	Citizen.InvokeNative(0xC6258F41D86676E0, ped, 1, 100) --_SET_ATTRIBUTE_CORE_VALUE
-	Citizen.InvokeNative(0xC6258F41D86676E0, ped, 0, 100)
+	SetAttributeCoreValue(ped, 1, 100)
+	SetAttributeCoreValue(ped, 0, 100)
 end
 
 function CharSelect()
@@ -234,7 +243,7 @@ function CharSelect()
 	local coords = myChars[selectedChar].coords
 	if not coords.x or not coords.y or not coords.z or not coords.heading then
 		print("No coords found send back to original")
-		coords = Config.SpawnCoords.position
+		coords = Config.SpawnCoords[math.random( #Config.SpawnCoords )].position
 	end
 
 	local playerCoords = vector3(tonumber(coords.x), tonumber(coords.y), tonumber(coords.z))
@@ -271,7 +280,8 @@ function StartSwapCharacters()
 	for key, value in pairs(myChars) do
 		LoadPlayer(value.skin.sex)
 		local data = Config.SpawnPosition[random].positions[key]
-		data.PedHandler = CreatePed(joaat(value.skin.sex), data.spawn, false, true, true, true)
+		if not data then return error("your config spawn locations doesnt have enough spawn locations you need to add: " .. #myChars .. "Spawn locations") end
+		data.PedHandler = CreatePed(joaat(value.skin.sex), data.spawn.x, data.spawn.y, data.spawn.z, data.spawn.w, false, false, false, false)
 		repeat Wait(0) until DoesEntityExist(data.PedHandler)
 		LoadCharacterSelect(data.PedHandler, value.skin, value.components)
 		data.Cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", data.camera.x, data.camera.y, data.camera.z, data.camera.rotx, data.camera.roty, data.camera.rotz, data.camera.fov, false, 2)
@@ -321,7 +331,8 @@ local fontSize = "18px"
 
 CreateThread(function()
 	Resolution = Core.Graphics.ScreenResolution()
-	if Resolution.width <= 1920 then
+	print("Resolution received")
+	if Resolution and Resolution.width <= 1920 then
 		imgPath = "<img style='max-height:200px;max-width:200px;float: center;'src='nui://" .. GetCurrentResourceName() .. "/images/%s.png'>"
 		Divider = "<br>" .. img:format("divider_line")
 		SubTitle = T.MenuCreation.subtitle1
@@ -359,7 +370,7 @@ local function DeleleteSelectedChaacter(menu)
 	PlaySoundFrontend('TITLE_SCREEN_EXIT', 'DEATH_FAIL_RESPAWN_SOUNDS', true, 0)
 	AnimpostfxPlay("RespawnPulse01")
 	SetCamActiveWithInterp(mainCam, dataConfig.Cam, 1500, 500, 500)
-	SetCamFocusDistance(cam, 1.0)
+	SetCamFocusDistance(mainCam, 1.0)
 
 	for key, value in pairs(menu.data.elements) do
 		if value.value == "choose" and key == selectedChar then
@@ -409,38 +420,23 @@ local WhileSwaping = false
 function EnableSelectionPrompts(menu)
 	CreateThread(function()
 		WhileSwaping = false
+		local label = VarString(10, 'LITERAL_STRING', T.PromptLabels.promptselectChar)
 		while not WhileSwaping do
-			local label = CreateVarString(10, 'LITERAL_STRING', T.PromptLabels.promptselectChar)
-			PromptSetActiveGroupThisFrame(PromptGroup, label)
+			UiPromptSetActiveGroupThisFrame(PromptGroup, label, 0, 0, 0, 0)
 			if not Config.AllowPlayerDeleteCharacter then
-				PromptSetEnabled(DeletePrompt, false)
+				UiPromptSetEnabled(DeletePrompt, false)
 			end
 
-			if PromptHasStandardModeCompleted(DeletePrompt) then
-				exports[GetCurrentResourceName()]:_UI_FEED_POST_OBJECTIVE(-1, Translation.Langs[Lang].Inputs.notify)
-
-				while true do
-					Wait(0)
-
-					if IsControlJustPressed(0, joaat("INPUT_CREATOR_DELETE")) then
-						UiFeedClearChannel()
-						return DeleleteSelectedChaacter(menu)
-					end
-
-					if IsControlJustPressed(0, joaat("INPUT_FRONTEND_CANCEL")) then
-						UiFeedClearChannel()
-						break
-					end
-				end
+			if UiPromptHasHoldModeCompleted(DeletePrompt) then
+				return DeleleteSelectedChaacter(menu)
 			end
 
-			if PromptHasStandardModeCompleted(SelectPrompt) then
+			if UiPromptHasStandardModeCompleted(SelectPrompt, 0) then
 				WhileSwaping = true
-				UiFeedClearChannel()
+				UiFeedClearChannel(3, true, false)
 				AnimpostfxPlay("RespawnPulse01")
 				PlaySoundFrontend("Ready_Up_Flash", "RDRO_In_Game_Menu_Sounds", true, 0)
-				local dataConfig = Config.SpawnPosition[random].positions[selectedChar]
-				Citizen.InvokeNative(0xE1EF3C1216AFF2CD, PlayerPedId(), 0, 0) -- CLEAR  scenario
+				ClearPedTasks(PlayerPedId(), false, false)
 				Wait(1000)
 				AnimpostfxPlay('PhotoMode_FilterGame06')
 				finishSelection(true)
@@ -452,8 +448,8 @@ function EnableSelectionPrompts(menu)
 				return
 			end
 
-			if PromptHasStandardModeCompleted(GoBackPrompt) then
-				UiFeedClearChannel()
+			if UiPromptHasStandardModeCompleted(GoBackPrompt, 0) then
+				UiFeedClearChannel(3, true, false)
 				createMainCam()
 				SetCamActiveWithInterp(mainCam, LastCam, 1500, 500, 500)
 				SetCamFocusDistance(mainCam, 1.0)
@@ -461,7 +457,8 @@ function EnableSelectionPrompts(menu)
 				AnimpostfxPlay("RespawnPulse01")
 				return
 			end
-
+			---- SET_BLOCKING_OF_NON_TEMPORARY_EVENTS_FOR_AMBIENT_PEDS_THIS_FRAME
+			Citizen.InvokeNative(0x9911F4A24485F653, true)
 			Wait(0)
 		end
 	end)
@@ -472,14 +469,25 @@ function OpenMenuSelect()
 	local elements = {}
 
 	for key, value in ipairs(myChars) do
-		local desc = GetCharacterDescDetails(value)
-		elements[#elements + 1] = {
-			label = value.firstname .. " " .. value.lastname .. "<br>" .. "<span style ='opacity:0.6;'>" .. value.nickname .. "</span>",
-			value = "choose",
-			desc = imgPath:format("character_creator_appearance") .. "<br>" .. desc .. "<br>" .. value.charDesc .. Divider .. T.MainMenu.NameDesc,
-			char = value,
-			index = key,
-		}
+		if not Config.showchardesc then
+			desc = Divider .. T.MainMenu.NameDesc
+			elements[#elements + 1] = {
+				label = value.firstname .. " " .. value.lastname,
+				value = "choose",
+				desc = desc,
+				char = value,
+				index = key,
+			}
+		else
+			local desc = GetCharacterDescDetails(value)
+			elements[#elements + 1] = {
+				label = value.firstname .. " " .. value.lastname .. "<br>" .. "<span style='opacity:0.6;'>" .. value.nickname .. "</span>",
+				value = "choose",
+				desc = imgPath:format("character_creator_appearance") .. "<br>" .. desc .. "<br>" .. value.charDesc .. Divider .. T.MainMenu.NameDesc,
+				char = value,
+				index = key,
+			}
+		end
 	end
 
 	for i = 1, MaxCharacters - #myChars, 1 do
@@ -505,7 +513,7 @@ function OpenMenuSelect()
 
 		function(data, menu)
 			if (data.current.value == "choose") and not WhileSwaping then
-				UiFeedClearChannel()
+				UiFeedClearChannel(3, true, false)
 				WhileSwaping = true
 				SetCamFocusDistance(mainCam, 4.0)
 				selectedChar = data.current.index
@@ -529,7 +537,7 @@ function OpenMenuSelect()
 			end
 
 			if (data.current.value == "create") then
-				UiFeedClearChannel()
+				UiFeedClearChannel(3, true, false)
 				WhileSwaping = true
 				AnimpostfxPlay('PhotoMode_FilterGame06')
 				finishSelection(true)
@@ -560,10 +568,10 @@ AddEventHandler("vorpcharacter:reloadafterdeath", function()
 		LoadPlayerComponents(PlayerPedId(), CachedSkin, CachedComponents, reload)
 	end
 
-	Citizen.InvokeNative(0xC6258F41D86676E0, player, 0, 100)  --_SET_ATTRIBUTE_CORE_VALUE
+	SetAttributeCoreValue(player, 0, 100)
 	SetEntityHealth(player, 600, 1)
-	Citizen.InvokeNative(0xC6258F41D86676E0, player, 1, 100)  --_SET_ATTRIBUTE_CORE_VALUE
-	Citizen.InvokeNative(0x675680D089BFA21F, player, 1065330373) -- _RESTORE_PED_STAMINA
+	SetAttributeCoreValue(player, 1, 100)
+	RestorePedStamina(player, 1065330373)
 end)
 
 
@@ -576,7 +584,7 @@ function LoadPlayerComponents(ped, skin, components, reload)
 		local skinS = not Custom and skin.sex or Custom
 		LoadPlayer(joaat(skinS))
 		SetPlayerModel(PlayerId(), joaat(skinS), false)
-		Citizen.InvokeNative(0xA91E6CF94404E8C9, ped) -- _SET_ENTITY_FADE_IN
+		SetEntityFadeIn(ped)
 		ped = PlayerPedId()
 		SetModelAsNoLongerNeeded(joaat(skinS))
 		Custom = nil
@@ -590,38 +598,28 @@ function LoadPlayerComponents(ped, skin, components, reload)
 
 	skin = LoadAll(gender, ped, skin, components, true)
 	RegisterBodyIndexs(skin)
-	--	SetClothingStatus(components)
 	ApplyRolledClothingStatus()
 	FaceOverlay("beardstabble", skin.beardstabble_visibility, 1, 1, 0, 0, 1.0, 0, 1, skin.beardstabble_color_primary, 0, 0, 1, skin.beardstabble_opacity)
-	FaceOverlay("hair", skin.hair_visibility, skin.hair_tx_id, 1, 0, 0, 1.0, 0, 1, skin.hair_color_primary, 0, 0, 1,
-		skin.hair_opacity)
+	FaceOverlay("hair", skin.hair_visibility, skin.hair_tx_id, 1, 0, 0, 1.0, 0, 1, skin.hair_color_primary, 0, 0, 1, skin.hair_opacity)
 	FaceOverlay("scars", skin.scars_visibility, skin.scars_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1, skin.scars_opacity)
 	FaceOverlay("spots", skin.spots_visibility, skin.spots_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1, skin.spots_opacity)
 	FaceOverlay("disc", skin.disc_visibility, skin.disc_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1, skin.disc_opacity)
-	FaceOverlay("complex", skin.complex_visibility, skin.complex_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1,
-		skin.complex_opacity)
+	FaceOverlay("complex", skin.complex_visibility, skin.complex_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1, skin.complex_opacity)
 	FaceOverlay("acne", skin.acne_visibility, skin.acne_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1, skin.acne_opacity)
 	FaceOverlay("ageing", skin.ageing_visibility, skin.ageing_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1, skin.ageing_opacity)
-	FaceOverlay("freckles", skin.freckles_visibility, skin.freckles_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1,
-		skin.freckles_opacity)
+	FaceOverlay("freckles", skin.freckles_visibility, skin.freckles_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1, skin.freckles_opacity)
 	FaceOverlay("moles", skin.moles_visibility, skin.moles_tx_id, 0, 0, 1, 1.0, 0, 0, 0, 0, 0, 1, skin.moles_opacity)
-	FaceOverlay("shadows", skin.shadows_visibility, 1, 1, 0, 0, 1.0, 0, 1, skin.shadows_palette_color_primary,
-		skin.shadows_palette_color_secondary, skin.shadows_palette_color_tertiary, skin.shadows_palette_id,
-		skin.shadows_opacity)
-	FaceOverlay("eyebrows", skin.eyebrows_visibility, skin.eyebrows_tx_id, 1, 0, 0, 1.0, 0, 1, skin.eyebrows_color, 0, 0,
-		1, skin.eyebrows_opacity)
-	FaceOverlay("eyeliners", skin.eyeliner_visibility, skin.eyeliner_tx_id, 1, 0, 0, 1.0, 0, 1,
-		skin.eyeliner_color_primary, 0, 0, skin.eyeliner_palette_id, skin.eyeliner_opacity)
-	FaceOverlay("blush", skin.blush_visibility, skin.blush_tx_id, 1, 0, 0, 1.0, 0, 1, skin.blush_palette_color_primary, 0,
-		0, 1, skin.blush_opacity)
-	FaceOverlay("lipsticks", skin.lipsticks_visibility, 1, 1, 0, 0, 1.0, 0, 1, skin.lipsticks_palette_color_primary,
-		skin.lipsticks_palette_color_secondary, skin.lipsticks_palette_color_tertiary, skin.lipsticks_palette_id,
-		skin.lipsticks_opacity)
+	FaceOverlay("shadows", skin.shadows_visibility, 1, 1, 0, 0, 1.0, 0, 1, skin.shadows_palette_color_primary, skin.shadows_palette_color_secondary, skin.shadows_palette_color_tertiary, skin.shadows_palette_id, skin.shadows_opacity)
+	FaceOverlay("eyebrows", skin.eyebrows_visibility, skin.eyebrows_tx_id, 1, 0, 0, 1.0, 0, 1, skin.eyebrows_color, 0, 0, 1, skin.eyebrows_opacity)
+	FaceOverlay("eyeliners", skin.eyeliner_visibility, skin.eyeliner_tx_id, 1, 0, 0, 1.0, 0, 1, skin.eyeliner_color_primary, 0, 0, skin.eyeliner_palette_id, skin.eyeliner_opacity)
+	FaceOverlay("blush", skin.blush_visibility, skin.blush_tx_id, 1, 0, 0, 1.0, 0, 1, skin.blush_palette_color_primary, 0, 0, 1, skin.blush_opacity)
+	FaceOverlay("lipsticks", skin.lipsticks_visibility, 1, 1, 0, 0, 1.0, 0, 1, skin.lipsticks_palette_color_primary, skin.lipsticks_palette_color_secondary, skin.lipsticks_palette_color_tertiary, skin.lipsticks_palette_id, skin.lipsticks_opacity)
 	canContinue = true
 	FaceOverlay("grime", skin.grime_visibility, skin.grime_tx_id, 0, 0, 0, 1.0, 0, 1, 0, 0, 0, 1, skin.grime_opacity)
 	Wait(200)
 	TriggerServerEvent("vorpcharacter:reloadedskinlistener")
 	RemoveTagFromMetaPed(0x3F1F01E5) -- bullets
+	SetPedScale(ped, CachedSkin.Scale)
 end
 
 function FaceOverlay(name, visibility, tx_id, tx_normal, tx_material, tx_color_type, tx_opacity, tx_unk, palette_id, palette_color_primary, palette_color_secondary, palette_color_tertiary, var, opacity)
@@ -666,7 +664,7 @@ function FaceOverlay(name, visibility, tx_id, tx_normal, tx_material, tx_color_t
 
 	if canContinue then
 		canContinue = false
-		Citizen.CreateThread(StartOverlay)
+		CreateThread(StartOverlay)
 	end
 end
 
@@ -686,15 +684,13 @@ function StartOverlay()
 		current_texture_settings.material)
 	for k, v in ipairs(Config.overlay_all_layers) do
 		if v.visibility ~= 0 then
-			local overlay_id = Citizen.InvokeNative(0x86BB5FF45F193A02, textureId, v.tx_id, v.tx_normal, v.tx_material,
-				v.tx_color_type, v.tx_opacity, v.tx_unk)
+			local overlay_id = Citizen.InvokeNative(0x86BB5FF45F193A02, textureId, v.tx_id, v.tx_normal, v.tx_material, v.tx_color_type, v.tx_opacity, v.tx_unk)
 			if v.tx_color_type == 0 then
-				Citizen.InvokeNative(0x1ED8588524AC9BE1, textureId, overlay_id, v.palette); -- apply palette
-				Citizen.InvokeNative(0x2DF59FFE6FFD6044, textureId, overlay_id, v.palette_color_primary,
-					v.palette_color_secondary, v.palette_color_tertiary)        -- apply palette colours
+				Citizen.InvokeNative(0x1ED8588524AC9BE1, textureId, overlay_id, v.palette);                                                       -- apply palette
+				Citizen.InvokeNative(0x2DF59FFE6FFD6044, textureId, overlay_id, v.palette_color_primary, v.palette_color_secondary, v.palette_color_tertiary) -- apply palette colours
 			end
-			Citizen.InvokeNative(0x3329AAE2882FC8E4, textureId, overlay_id, v.var) -- apply overlay variant
-			Citizen.InvokeNative(0x6C76BC24F8BB709A, textureId, overlay_id, v.opacity) -- apply overlay opacity
+			Citizen.InvokeNative(0x3329AAE2882FC8E4, textureId, overlay_id, v.var)                                                                -- apply overlay variant
+			Citizen.InvokeNative(0x6C76BC24F8BB709A, textureId, overlay_id, v.opacity)                                                            -- apply overlay opacity
 		end
 	end
 
@@ -708,6 +704,7 @@ end
 
 -- work arround to fix scale issues
 CreateThread(function()
+	repeat Wait(2000) until LocalPlayer.state.IsInSession
 	while true do
 		local dead = IsEntityDead(PlayerPedId())
 		if CachedSkin then
@@ -716,7 +713,6 @@ CreateThread(function()
 				SetPedScale(PlayerPedId(), PlayerHeight)
 			end
 		end
-
 		Wait(1000)
 	end
 end)
@@ -753,7 +749,7 @@ AddEventHandler('onResourceStop', function(resourceName)
 	MenuData.CloseAll()
 	myChars[selectedChar] = {}
 	DestroyAllCams(true)
-	UiFeedClearChannel()
+	UiFeedClearChannel(3, true, false)
 	AnimpostfxStopAll()
 	Citizen.InvokeNative(0x120C48C614909FA4, "AZL_RDRO_Character_Creation_Area", true)                  -- CLEAR_AMBIENT_ZONE_LIST_STATE
 	Citizen.InvokeNative(0x9D5A25BADB742ACD, "AZL_RDRO_Character_Creation_Area_Other_Zones_Disable", true) -- CLEAR_AMBIENT_ZONE_LIST_STATE

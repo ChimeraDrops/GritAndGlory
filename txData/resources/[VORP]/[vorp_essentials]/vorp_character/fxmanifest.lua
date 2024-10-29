@@ -4,7 +4,8 @@ game 'rdr3'
 lua54 'yes'
 
 -- Initial Convertion from C# to lua by grumpypoo
-author 'VORP refactored by @outsider'
+name 'vorp character'
+author 'VORP @outsider'
 description 'A Character creator with also shops built in for vorpcore framework'
 repository 'https://github.com/VORPCORE/vorp_character-lua'
 
@@ -20,7 +21,6 @@ client_scripts {
 	'shared/clothing.lua',
 	'shared/hairs.lua',
 	'client/*.lua',
-	'client/notify.js',
 }
 
 server_scripts {
@@ -29,15 +29,13 @@ server_scripts {
 }
 
 files {
-	--'ui/*',
 	'images/*png',
 	'images/CreatorImages/*png',
 	'clothingfemale/*png',
 }
 
---========= VERSION =============--
 
-version '1.6'
+version '1.7'
 vorp_checker 'yes'
 vorp_name '^4Resource version Check^3'
 vorp_github 'https://github.com/VORPCORE/vorp_character-lua'

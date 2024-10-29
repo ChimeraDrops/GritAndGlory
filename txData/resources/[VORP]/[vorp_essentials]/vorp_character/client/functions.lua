@@ -29,10 +29,15 @@ function SetDefaultSkin(gender, skin)
                             end
                         end
                     end
+
                     break
                 end
             end
         end
+    end
+
+    if not next(__data) then
+        return skin
     end
 
     if skin.HeadType and skin.HeadType == 0 then
@@ -56,28 +61,28 @@ end
 
 --CREATOR
 function RemoveImaps()
-    if IsImapActive(183712523) then
-        RequestImap(183712523)
+    if IsIplActiveByHash(183712523) then
+        RequestIplByHash(183712523)
     end
 
-    if IsImapActive(-1699673416) then
-        RemoveImap(-1699673416)
+    if IsIplActiveByHash(-1699673416) then
+        RequestIplByHash(-1699673416)
     end
 
-    if IsImapActive(1679934574) then
-        RemoveImap(1679934574)
+    if IsIplActiveByHash(1679934574) then
+        RequestIplByHash(1679934574)
     end
 end
 
 function RequestImapCreator()
-    if not IsImapActive(183712523) then
-        RequestImap(183712523)
+    if not IsIplActiveByHash(183712523) then
+        RequestIplByHash(183712523)
     end
-    if not IsImapActive(-1699673416) then
-        RequestImap(-1699673416)
+    if not IsIplActiveByHash(-1699673416) then
+        RequestIplByHash(-1699673416)
     end
-    if not IsImapActive(1679934574) then
-        RequestImap(1679934574)
+    if not IsIplActiveByHash(1679934574) then
+        RequestIplByHash(1679934574)
     end
 end
 
@@ -147,9 +152,8 @@ function GetGender()
 end
 
 local textureId = -1
-function toggleOverlayChange(name, visibility, tx_id, tx_normal, tx_material, tx_color_type, tx_opacity, tx_unk,
-                             palette_id, palette_color_primary, palette_color_secondary, palette_color_tertiary, var,
-                             opacity, albedo)
+
+function ApplyOverlay(name, visibility, tx_id, tx_normal, tx_material, tx_color_type, tx_opacity, tx_unk, palette_id, palette_color_primary, palette_color_secondary, palette_color_tertiary, var, opacity, albedo)
     for k, v in pairs(Config.overlay_all_layers) do
         if v.name == name then
             v.visibility = visibility
@@ -192,6 +196,7 @@ function toggleOverlayChange(name, visibility, tx_id, tx_normal, tx_material, tx
 
     textureId = Citizen.InvokeNative(0xC5E7204F322E49EB, albedo, current_texture_settings.normal,
         current_texture_settings.material)
+
 
     for k, v in pairs(Config.overlay_all_layers) do
         if v.visibility ~= 0 then
@@ -306,7 +311,7 @@ function DrawText3D(x, y, z, text, color)
         r, g, b, a = table.unpack(color)
     end
     local onScreen, _x, _y = GetScreenCoordFromWorldCoord(x, y, z)
-    local str = CreateVarString(10, "LITERAL_STRING", text, Citizen.ResultAsLong())
+    local str = VarString(10, "LITERAL_STRING", text, Citizen.ResultAsLong())
     if onScreen then
         SetTextScale(0.4, 0.4)
         SetTextFontForCurrentCommand(25) -- font style
@@ -319,7 +324,7 @@ function DrawText3D(x, y, z, text, color)
 end
 
 function ShowBusyspinnerWithText(text)
-    N_0x7f78cd75cc4539e4(CreateVarString(10, "LITERAL_STRING", text))
+    N_0x7f78cd75cc4539e4(VarString(10, "LITERAL_STRING", text))
 end
 
 function GetName(Result)
@@ -425,10 +430,6 @@ end
 
 function SetCamMotionBlurStrength(cam, strength)
     Citizen.InvokeNative(0x45FD891364181F9E, cam, strength)
-end
-
-function UiFeedClearChannel()
-    N_0xdd1232b332cbb9e7(3, 1, 0)
 end
 
 function PrepareCreatorMusic()
@@ -610,3 +611,26 @@ function SetCachedSkin()
         end
     end
 end
+
+-- exports
+exports('GetPlayerComponent', function(category)
+    if not category then
+        print("must provide a category")
+        return nil
+    end
+
+    if not PlayerClothing[category] then
+        print("category does not exist")
+        return nil
+    end
+
+    if not CachedComponents[category] then
+        return nil
+    end
+
+    return CachedComponents[category]
+end)
+
+exports('GetAllPlayerComponents', function()
+    return CachedComponents
+end)

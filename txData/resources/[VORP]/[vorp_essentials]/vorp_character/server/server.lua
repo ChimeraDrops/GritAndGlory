@@ -5,7 +5,7 @@ local random = math.random(1, #Config.SpawnPosition)
 local Core = exports.vorp_core:GetCore()
 
 
-function ConvertTable(comps, compTints)
+local function ConvertTable(comps, compTints)
 	local NewComps = {}
 
 	for k, comp in pairs(comps) do
@@ -23,7 +23,7 @@ function ConvertTable(comps, compTints)
 	return NewComps
 end
 
-function Checkmissingkeys(data, key)
+local function Checkmissingkeys(data, key)
 	local switch = false
 	if key == "skin" then
 		for k, v in pairs(PlayerSkin) do
@@ -72,7 +72,7 @@ local function UpdateDatabase(character)
 	return skin, NewComps
 end
 
-function GetPlayerData(source)
+local function GetPlayerData(source)
 	local User = Core.getUser(source)
 
 	if not User then
@@ -112,12 +112,22 @@ RegisterServerEvent("vorp_CreateNewCharacter", function(source)
 	TriggerClientEvent("vorpcharacter:startCharacterCreator", _source)
 end)
 
+local function iniSpawn()
+   local numSpawns = #Config.SpawnCoords
+   if numSpawns == 0 then return print("update config file") end
+   local randomIndex = math.random(1, numSpawns) 
+   local selectedSpawn = Config.SpawnCoords[randomIndex] 
+   return selectedSpawn.position, selectedSpawn.heading
+end
 
 RegisterServerEvent("vorpcharacter:saveCharacter", function(data)
 	local _source = source
 	Core.getUser(_source).addCharacter(data)
 	Wait(600)
-	TriggerClientEvent("vorp:initCharacter", _source, Config.SpawnCoords.position, Config.SpawnCoords.heading, false)
+
+	local iniPos, iniHead = iniSpawn()
+	
+	TriggerClientEvent("vorp:initCharacter", _source, iniPos, iniHead, false)
 	SetTimeout(3000, function()
 		TriggerEvent("vorp_NewCharacter", _source)
 	end)
@@ -126,14 +136,19 @@ end)
 RegisterServerEvent("vorpcharacter:deleteCharacter", function(charid)
 	local _source = source
 	local User = Core.getUser(_source)
-	User.removeCharacter(charid)
+	if User then
+		User.removeCharacter(charid)
+	end
 end)
 
-RegisterServerEvent("vorp_CharSelectedCharacter")
-AddEventHandler("vorp_CharSelectedCharacter", function(charid)
+RegisterServerEvent("vorp_CharSelectedCharacter", function(charid)
 	local _source = source
-	Core.getUser(_source).setUsedCharacter(charid)
+	local User = Core.getUser(_source)
+	if User then
+		User.setUsedCharacter(charid)
+	end
 end)
+
 
 
 RegisterNetEvent("vorpcharacter:setPlayerCompChange", function(skinValues, compsValues)
@@ -195,6 +210,9 @@ end)
 
 Core.Callback.Register("vorp_character:callback:PayToShop", function(source, callback, arguments)
 	local User = Core.getUser(source)
+	if not User then
+		return callback(false)
+	end
 	local character = User.getUsedCharacter
 	local money = character.money
 	local amountToPay = arguments.amount
@@ -292,10 +310,9 @@ end)
 Core.Callback.Register("vorp_character:callback:GetOutfits", function(source, callback, arguments)
 	local Character = Core.getUser(source).getUsedCharacter
 
-	MySQL.query("SELECT * FROM outfits WHERE `identifier` = ? AND `charidentifier` = ?",
-		{ Character.identifier, Character.charIdentifier }, function(Outfits)
-			return callback(Outfits)
-		end)
+	MySQL.query("SELECT * FROM outfits WHERE `identifier` = ? AND `charidentifier` = ?", { Character.identifier, Character.charIdentifier }, function(Outfits)
+		return callback(Outfits)
+	end)
 end)
 
 Core.Callback.Register("vorp_character:callback:SetOutfit", function(source, callback, arguments)

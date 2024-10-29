@@ -6,3 +6,20 @@
 [14:12:39][KSUIE_Gaming] Setting recipe.
 [14:14:31][KSUIE_Gaming] Running recipe.
 [14:23:28][KSUIE_Gaming] Changing fxRunner settings.
+================================================================
+======== txAdmin v7.3.2 atop fxserver 10653 Starting - 10/28/2024, 2:26:59 PM
+================================================================
+================================================================
+======== txAdmin v7.3.2 atop fxserver 10653 Starting - 10/28/2024, 5:44:57 PM
+================================================================
+[17:45:26][KSUIE_Gaming] logged in from 127.0.0.1 via cfxre
+[17:45:58][KSUIE_Gaming] Changing fxRunner settings.
+[17:46:16][KSUIE_Gaming] executed "START SERVER"
+[17:50:03][KSUIE_Gaming] executed "STOP SERVER"
+================================================================
+======== txAdmin v7.3.2 atop fxserver 10653 Starting - 10/28/2024, 6:21:15 PM
+================================================================
+[18:21:27][KSUIE_Gaming] logged in from 127.0.0.1 via cfxre
+[18:22:32][KSUIE_Gaming] executed "RESTART SERVER"
+[18:25:09][KSUIE_Gaming] executed "RESTART SERVER"
+[18:27:07][KSUIE_Gaming] executed "RESTART SERVER"
