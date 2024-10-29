@@ -14,17 +14,15 @@ Config.chanceGettingItem = 100 -- Chance of getting an item, as a percentage
 -- List of possible items to receive
 Config.items = {
     { name = "water",              label = "Water",                amount = 1 },
-    { name = "ammorepeaternormal", label = "Normal Ammo Repeater", amount = 1 },
-    { name = "ammoriflenormal",    label = "Normal Ammo Rifle",    amount = 1 },
 }
 
 -- Money receiving settings
 -- Enable or disable the chance to receive MONEY
-Config.canReceiveMoney = false  -- Set to 'true' to enable, 'false' to disable money receiving
+Config.canReceiveMoney = true  -- Set to 'true' to enable, 'false' to disable money receiving
 Config.receiveMoney = 50        -- Threshold number; receive money if random number is below this
-Config.chanceGettingMoney = 100 -- Chance of getting money, as a percentage
+Config.chanceGettingMoney = 50 -- Chance of getting money, as a percentage
 -- List of possible money values to receive
-Config.money = { 0.5, 1, 1.5 }
+Config.money = { 0.5, 0.75, 1.0 }
 
 -- Gold receiving settings
 -- Enable or disable the chance to receive GOLD
