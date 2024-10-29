@@ -1,8 +1,12 @@
 # Ignore everything
 *
 
-# Allow the resources folder
+# Allow the resources folder and its contents, but ignore .json files within it
 !/resources/
+!/resources/**
 
-# Ignore all .json files in resources or any subdirectories
+# Explicitly ignore all .json files in resources or any subdirectories
 resources/**/*.json
+
+# Explicitly ignore the cache directory at the root level
+/cache/
