@@ -103,7 +103,7 @@ Citizen.CreateThread(function()
             exports.vorp_inventory:closeInventory(data.source)
         end)
     end
-    exports["ksuie"]:printTable(Baits)
+    exports["ksuie_helper"]:printTable(Baits)
 end)
 
 RegisterServerEvent('vorp_fishing:FishToInventory')

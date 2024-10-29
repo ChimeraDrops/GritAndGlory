@@ -2,3 +2,7 @@
 ======== txAdmin v7.3.2 atop fxserver 10653 Starting - 10/29/2024, 5:50:26 PM
 ================================================================
 [17:50:38][KSUIE_Gaming] logged in from 127.0.0.1 via cfxre
+[17:56:57][KSUIE_Gaming] executed "refresh"
+[17:57:04][KSUIE_Gaming] executed "ensure "ksuie_helper""
+[17:57:10][KSUIE_Gaming] executed "ensure "vorp_fishing""
+[17:58:37][KSUIE_Gaming] executed "ensure "vorp_fishing""

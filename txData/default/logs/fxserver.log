@@ -413,3 +413,98 @@
 [    script:vorp_core] ###############################################################################
 [             TXADMIN] txaReportResources 
 [      script:monitor] [txAdmin] Sending resources list to txAdmin.
+[        KSUIE_Gaming] refresh 
+[           resources] Scanning resources.
+[             TXADMIN] txaReportResources 
+[           resources] Found 1 new resources, and refreshed 0/73 resources.
+[      script:monitor] [txAdmin] Sending resources list to txAdmin.
+[        KSUIE_Gaming] ensure "ksuie_helper" 
+[    c-scripting-core] Creating script environments for ksuie_helper
+[           resources] Started resource ksuie_helper
+[             TXADMIN] txaReportResources 
+[      script:monitor] [txAdmin] Sending resources list to txAdmin.
+[        KSUIE_Gaming] ensure "vorp_fishing" 
+[             TXADMIN] txaReportResources 
+[           resources] Stopping resource vorp_fishing
+[    c-scripting-core] Creating script environments for vorp_fishing
+[           resources] Started resource vorp_fishing
+[      script:monitor] [txAdmin] Sending resources list to txAdmin.
+[script:vorp_inventor] Warning: item 	p_baitBread01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_baitCorn01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_baitCheese01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_baitWorm01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_baitCricket01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_crawdad01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finishedragonfly01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_FinisdFishlure01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finishdcrawd01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finishedragonflylegendary01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finisdfishlurelegendary01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finishdcrawdlegendary01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_lgoc_spinner_v4	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_lgoc_spinner_v6	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[ script:vorp_fishing] SCRIPT ERROR: @vorp_fishing/server/server.lua:106: No such export printTable in resource ksuie
+[             TXADMIN] txaReportResources 
+[      script:monitor] [txAdmin] Sending resources list to txAdmin.
+[        KSUIE_Gaming] ensure "vorp_fishing" 
+[           resources] Stopping resource vorp_fishing
+[    c-scripting-core] Creating script environments for vorp_fishing
+[             TXADMIN] txaReportResources 
+[           resources] Started resource vorp_fishing
+[      script:monitor] [txAdmin] Sending resources list to txAdmin.
+[script:vorp_inventor] Warning: item 	p_baitBread01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_baitCorn01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_baitCheese01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_baitWorm01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_baitCricket01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_crawdad01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finishedragonfly01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_FinisdFishlure01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finishdcrawd01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finishedragonflylegendary01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finisdfishlurelegendary01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_finishdcrawdlegendary01x	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_lgoc_spinner_v4	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[script:vorp_inventor] Warning: item 	p_lgoc_spinner_v6	 is already registered,  cant register the same item twice 
+[script:vorp_inventor] Info: if you restarting a script this is normal and you can ignore it!.
+[ script:ksuie_helper] 1: p_baitBread01x
+[ script:ksuie_helper] 2: p_baitCorn01x
+[ script:ksuie_helper] 3: p_baitCheese01x
+[ script:ksuie_helper] 4: p_baitWorm01x
+[ script:ksuie_helper] 5: p_baitCricket01x
+[ script:ksuie_helper] 6: p_crawdad01x
+[ script:ksuie_helper] 7: p_finishedragonfly01x
+[ script:ksuie_helper] 8: p_FinisdFishlure01x
+[ script:ksuie_helper] 9: p_finishdcrawd01x
+[ script:ksuie_helper] 10: p_finishedragonflylegendary01x
+[ script:ksuie_helper] 11: p_finisdfishlurelegendary01x
+[ script:ksuie_helper] 12: p_finishdcrawdlegendary01x
+[ script:ksuie_helper] 13: p_lgoc_spinner_v4
+[ script:ksuie_helper] 14: p_lgoc_spinner_v6
