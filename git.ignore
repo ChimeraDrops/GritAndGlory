@@ -1,0 +1,8 @@
+# Ignore everything
+*
+
+# Allow the resources folder
+!/resources/
+
+# Ignore all .json files in resources or any subdirectories
+resources/**/*.json
