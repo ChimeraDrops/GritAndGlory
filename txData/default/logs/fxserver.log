@@ -213,3 +213,5 @@
 [           resources] Found 0 new resources, and refreshed 0/73 resources.
 [           resources] 1 warning was encountered.
 [      script:monitor] [txAdmin] Sending resources list to txAdmin.
+[             TXADMIN] txaEvent "serverShuttingDown" "{＂delay＂:5000,＂author＂:＂KSUIE_Gaming＂,＂message＂:＂Server shutting down (admin request).＂}" 
+[      script:monitor] [txAdmin] Server shutdown imminent. Kicking all players.
