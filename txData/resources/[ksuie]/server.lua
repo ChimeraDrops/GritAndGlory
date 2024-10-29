@@ -13,3 +13,4 @@ function printTable(tbl, indent)
         end
     end
 end
+exports('printTable', printTable)
