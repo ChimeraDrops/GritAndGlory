@@ -49,8 +49,366 @@ local fishs = {
     [`A_C_FISHSMALLMOUTHBASS_01_MS`] = FishData.A_C_FISHSMALLMOUTHBASS_01_MS[1],
 }
 
+function prepareMyPrompt()
+    print("prepareMyPrompt triggered")
+    fishing_data.prompt_prepare_fishing.group = GetRandomIntInRange(0, 0xffffff)
+    local prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, GetHashKey("INPUT_AIM")) -- MOUSE LEFT CLICK
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.PrepRod))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_prepare_fishing.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_prepare_fishing.change_bait = prompt
+
+    prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, 0x07CE1E61) -- LEFT CONTROL
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.ThrowHook))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_prepare_fishing.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_prepare_fishing.throw_hook = prompt
+
+
+    fishing_data.prompt_waiting_hook.group = GetRandomIntInRange(0, 0xffffff)
+    prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, GetHashKey("INPUT_ATTACK")) -- MOUSE LEFT CLICK
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.HookFish))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_waiting_hook.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_waiting_hook.hook_fish = prompt
+
+    prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, 0x8FFC75D6) -- LEFT SHIFT
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.Cancel))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_waiting_hook.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_waiting_hook.cancel = prompt
+
+    prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, 0xDB096B85) -- LEFT CONTROL
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.ReelLure))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_waiting_hook.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_waiting_hook.reel_lure = prompt
+
+    -- Puxando Peixe
+    fishing_data.prompt_hook.group = GetRandomIntInRange(0, 0xffffff)
+    prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, 0xFBD7B3E6) -- SPACE
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.ReelIn))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_hook.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_hook.reel = prompt
+
+    prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, 0x8FFC75D6) -- LEFT SHIFT
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.Cancel))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_hook.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_hook.cancel = prompt
+
+    -- Peixe Pego
+    fishing_data.prompt_finish.group = GetRandomIntInRange(0, 0xffffff)
+    prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, GetHashKey("INPUT_ATTACK")) -- MOUSE LEFT CLICK
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.KeepFish))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_finish.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_finish.keep_fish = prompt
+
+    prompt = PromptRegisterBegin()
+    PromptSetControlAction(prompt, GetHashKey("INPUT_AIM"))  -- MOUSE RIGHT CLICK
+    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.ThrowFish))
+    PromptSetEnabled(prompt, true)
+    PromptSetVisible(prompt, true)
+    PromptSetHoldMode(prompt, false)
+    PromptSetGroup(prompt, fishing_data.prompt_finish.group)
+    PromptRegisterEnd(prompt)
+    fishing_data.prompt_finish.throw_fish = prompt
+end
+
+function GET_TASK_FISHING_DATA()
+    local r = exports["vorp_fishing"]:GET_TASK_FISHING_DATA_EXTRA()
+    hasMinigameOn = r[1]
+    local outAsInt = r[2]
+    local outAsFloat = r[3]
+
+    fishing_minigame_struct = {}
+
+    fishing_minigame_struct = {
+        f_0 = outAsInt["0"],
+        f_1 = outAsFloat["2"],
+        f_2 = outAsFloat["4"],
+        f_3 = outAsFloat["6"],
+        f_4 = outAsFloat["8"],
+        f_5 = outAsInt["10"],
+        f_6 = outAsInt["12"],
+        f_7 = outAsInt["14"],
+        f_8 = outAsFloat["16"],
+        f_9 = outAsFloat["18"],
+        f_10 = outAsInt["20"],
+        f_11 = outAsInt["22"],
+        f_12 = outAsInt["24"],
+        f_13 = outAsFloat["26"],
+        f_14 = outAsFloat["28"],
+        f_15 = outAsFloat["30"],
+        f_16 = outAsInt["32"],
+        f_17 = outAsFloat["34"],
+        f_18 = outAsInt["36"],
+        f_19 = outAsInt["38"],
+        f_20 = outAsFloat["40"],
+        f_21 = outAsFloat["42"],
+        f_22 = outAsFloat["44"],
+        f_23 = outAsFloat["46"],
+        f_24 = outAsFloat["48"],
+        f_25 = outAsFloat["50"],
+        f_26 = outAsFloat["52"],
+        f_27 = outAsFloat["54"]
+    }
+end
+
+function isFishInterested(fishModel)
+    local baitedFish = BaitsPerFish[currentLure]
+    if baitedFish ~= nil then
+        for _, fish in pairs(baitedFish) do
+            if fishs[fishModel] == fish then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+function SET_TASK_FISHING_DATA()
+    if fishing_minigame_struct.f_0 ~= nil then
+        exports["vorp_fishing"]:SET_TASK_FISHING_DATA_EXTRA(fishing_minigame_struct)
+    end
+end
+
+function FISHING_HAS_MINIGAME_ON()
+    return hasMinigameOn
+end
+
+function FISHING_GET_F_(f)
+    return fishing_minigame_struct["f_" .. f]
+end
+
+function FISHING_GET_MINIGAME_STATE()
+    return FISHING_GET_F_(0)
+end
+
+function FISHING_GET_MAX_THROWING_DISTANCE()
+    return FISHING_GET_F_(1)
+end
+
+function FISHING_GET_LINE_DISTANCE()
+    return FISHING_GET_F_(2)
+end
+
+function FISHING_GET_TRANSITION_FLAG()
+    return FISHING_GET_F_(6)
+end
+
+function FISHING_GET_FISH_HANDLE()
+    return FISHING_GET_F_(7)
+end
+
+function FISHING_GET_CALCULATED_FISH_WEIGHT()
+    return FISHING_GET_F_(8)
+end
+
+function FISHING_GET_F_9()
+    return FISHING_GET_F_(9)
+end
+
+function FISHING_GET_SCRIPT_TIMER()
+    return FISHING_GET_F_(10)
+end
+
+function FISHING_GET_BOBBER_HANDLE()
+    return FISHING_GET_F_(11)
+end
+
+function FISHING_GET_HOOK_HANDLE()
+    return FISHING_GET_F_(12)
+end
+
+function FISHING_SET_F_(f, v)
+    fishing_minigame_struct["f_" .. f] = v
+    SET_TASK_FISHING_DATA()
+end
+
+function FISHING_SET_LINE_DISTANCE(v)
+    FISHING_SET_F_(2, v)
+end
+
+function FISHING_SET_TRANSITION_FLAG(v)
+    FISHING_SET_F_(6, v)
+end
+
+function FISHING_SET_FISH_HANDLE(v)
+    FISHING_SET_F_(7, v)
+    local weight_index = FishModelToSomeSortOfWeightIndex(GetEntityModel(v))
+
+    FISHING_SET_CALCULATED_FISH_WEIGHT(GetRandomFishWeightForWeightIndex(weight_index) / 54.25)
+
+    fishing_data.fish.rodweight = 2
+    FISHING_SET_ROD_WEIGHT(fishing_data.fish.rodweight)
+end
+
+function FISHING_SET_CALCULATED_FISH_WEIGHT(v)
+    fishing_data.fish.weight = v * 54.25
+
+    FISHING_SET_F_(8, v)
+end
+
+function FISHING_SET_ROD_WEIGHT(v)
+    FISHING_SET_F_(18, v)
+end
+
+function FISHING_SET_ROD_POSITION_LR(v)
+    FISHING_SET_F_(22, v)
+end
+
+function FISHING_SET_ROD_POSITION_UD(v)
+    FISHING_SET_F_(23, v)
+end
+
+function GetNearbyFishs(coords, radius)
+    local r = {}
+
+    local itemSet = CreateItemset(true)
+    local size = Citizen.InvokeNative(0x59B57C4B06531E1E, coords, radius, itemSet, 1, Citizen.ResultAsInteger())
+
+    if size > 0 then
+        for index = 0, size - 1 do
+            local entity = GetIndexedItemInItemset(index, itemSet)
+            local populationType = GetEntityPopulationType(entity)
+            if (populationType == 6 or populationType == 8) and not IsPedDeadOrDying(entity, 0) then
+                table.insert(r, entity)
+            end
+        end
+    end
+
+    if IsItemsetValid(itemSet) then
+        DestroyItemset(itemSet)
+    end
+
+    return r
+end
+
+function FishModelToSomeSortOfWeightIndex(fishModel)
+    if fishModel == GetHashKey("A_C_FISHBLUEGIL_01_SM") then ------Small size fish
+        return 0
+    elseif fishModel == GetHashKey("A_C_FISHBULLHEADCAT_01_SM") then
+        return 1
+    elseif fishModel == GetHashKey("A_C_FISHREDFINPICKEREL_01_SM") then
+        return 2
+    elseif fishModel == GetHashKey("A_C_FISHPERCH_01_SM") then
+        return 3
+    elseif fishModel == GetHashKey("A_C_FISHCHAINPICKEREL_01_SM") then
+        return 4
+    elseif fishModel == GetHashKey("A_C_FISHROCKBASS_01_SM") then
+        return 5
+    elseif fishModel == GetHashKey("A_C_FISHBLUEGIL_01_MS") then ------ Medium Size fish
+        return 6
+    elseif fishModel == GetHashKey("A_C_FISHBULLHEADCAT_01_MS") then
+        return 7
+    elseif fishModel == GetHashKey("A_C_FISHCHAINPICKEREL_01_MS") then
+        return 8
+    elseif fishModel == GetHashKey("A_C_FISHPERCH_01_MS") then
+        return 9
+    elseif fishModel == GetHashKey("A_C_FISHLARGEMOUTHBASS_01_MS") then
+        return 10
+    elseif fishModel == GetHashKey("A_C_FISHREDFINPICKEREL_01_MS") then
+        return 11
+    elseif fishModel == GetHashKey("A_C_FISHRAINBOWTROUT_01_MS") then
+        return 12
+    elseif fishModel == GetHashKey("A_C_FISHROCKBASS_01_MS") then
+        return 13
+    elseif fishModel == GetHashKey("A_C_FISHSALMONSOCKEYE_01_MS") then
+        return 14
+    elseif fishModel == GetHashKey("A_C_FISHSMALLMOUTHBASS_01_MS") then
+        return 15
+    elseif fishModel == GetHashKey("A_C_FISHSALMONSOCKEYE_01_ML") then   ----- Medium Large fish
+        return 16
+    elseif fishModel == GetHashKey("A_C_FISHCHANNELCATFISH_01_LG") then  ---- Large Fish
+        return 17
+    elseif fishModel == GetHashKey("A_C_FISHLAKESTURGEON_01_LG") then
+        return 18
+    elseif fishModel == GetHashKey("A_C_FISHLARGEMOUTHBASS_01_LG") then
+        return 19
+    elseif fishModel == GetHashKey("A_C_FISHLONGNOSEGAR_01_LG") then
+        return 20
+    elseif fishModel == GetHashKey("A_C_FISHMUSKIE_01_LG") then
+        return 21
+    elseif fishModel == GetHashKey("A_C_FISHNORTHERNPIKE_01_LG") then
+        return 22
+    elseif fishModel == GetHashKey("A_C_FISHRAINBOWTROUT_01_LG") then
+        return 23
+    elseif fishModel == GetHashKey("A_C_FISHSALMONSOCKEYE_01_LG") then
+        return 24
+    elseif fishModel == GetHashKey("A_C_FISHSMALLMOUTHBASS_01_LG") then
+        return 25
+    end
+end
+
+function GetMinMaxWeightForWeightIndex(index)
+    local min = 0.0
+    local max = 0.0
+
+    if index == 0 or index == 1 or index == 2 or index == 3 or index == 4 or index == 5 then -----small fish
+        min = 0.5
+        max = 5.0
+    elseif index == 17 or index == 18 or index == 20 or index == 21 or index == 22 or index == 16 then ----Large
+        min = 14.0
+        max = 20.0
+    elseif index == 19 or index == 23 or index == 24 or index == 25 then ----Legendary large
+        min = 20.0
+        max = 25.0
+    elseif index == 6 or index == 7 or index == 8 or index == 9 or index == 10 or index == 11 or index == 12 or index == 13 or index == 14 or index == 15 then  ---- Med and Legend med
+        min = 6.0
+        max = 10.0
+    end
+
+    min = min
+    max = max
+
+    return min, max
+end
+
+function GetRandomFishWeightForWeightIndex(index)
+    local min, max = GetMinMaxWeightForWeightIndex(index)
+    local weight = math.random() * (max - min) + min
+
+    return weight
+end
+
 RegisterNetEvent("vorp_fishing:UseBait")
 AddEventHandler("vorp_fishing:UseBait", function(UsableBait)
+    print("UsedBait", UsableBait)
     Citizen.CreateThread(function()
         Citizen.InvokeNative(0x1096603B519C905F, "MMFSH")
         prepareMyPrompt()
@@ -372,361 +730,7 @@ Citizen.CreateThread(function()
     end
 end)
 
-function GET_TASK_FISHING_DATA()
-    local r = exports["vorp_fishing"]:GET_TASK_FISHING_DATA_EXTRA()
-    hasMinigameOn = r[1]
-    local outAsInt = r[2]
-    local outAsFloat = r[3]
 
-    fishing_minigame_struct = {}
-
-    fishing_minigame_struct = {
-        f_0 = outAsInt["0"],
-        f_1 = outAsFloat["2"],
-        f_2 = outAsFloat["4"],
-        f_3 = outAsFloat["6"],
-        f_4 = outAsFloat["8"],
-        f_5 = outAsInt["10"],
-        f_6 = outAsInt["12"],
-        f_7 = outAsInt["14"],
-        f_8 = outAsFloat["16"],
-        f_9 = outAsFloat["18"],
-        f_10 = outAsInt["20"],
-        f_11 = outAsInt["22"],
-        f_12 = outAsInt["24"],
-        f_13 = outAsFloat["26"],
-        f_14 = outAsFloat["28"],
-        f_15 = outAsFloat["30"],
-        f_16 = outAsInt["32"],
-        f_17 = outAsFloat["34"],
-        f_18 = outAsInt["36"],
-        f_19 = outAsInt["38"],
-        f_20 = outAsFloat["40"],
-        f_21 = outAsFloat["42"],
-        f_22 = outAsFloat["44"],
-        f_23 = outAsFloat["46"],
-        f_24 = outAsFloat["48"],
-        f_25 = outAsFloat["50"],
-        f_26 = outAsFloat["52"],
-        f_27 = outAsFloat["54"]
-    }
-end
-
-function isFishInterested(fishModel)
-    local baitedFish = BaitsPerFish[currentLure]
-    if baitedFish ~= nil then
-        for _, fish in pairs(baitedFish) do
-            if fishs[fishModel] == fish then
-                return true
-            end
-        end
-    end
-    return false
-end
-
-function SET_TASK_FISHING_DATA()
-    if fishing_minigame_struct.f_0 ~= nil then
-        exports["vorp_fishing"]:SET_TASK_FISHING_DATA_EXTRA(fishing_minigame_struct)
-    end
-end
-
-function FISHING_HAS_MINIGAME_ON()
-    return hasMinigameOn
-end
-
-function FISHING_GET_F_(f)
-    return fishing_minigame_struct["f_" .. f]
-end
-
-function FISHING_GET_MINIGAME_STATE()
-    return FISHING_GET_F_(0)
-end
-
-function FISHING_GET_MAX_THROWING_DISTANCE()
-    return FISHING_GET_F_(1)
-end
-
-function FISHING_GET_LINE_DISTANCE()
-    return FISHING_GET_F_(2)
-end
-
-function FISHING_GET_TRANSITION_FLAG()
-    return FISHING_GET_F_(6)
-end
-
-function FISHING_GET_FISH_HANDLE()
-    return FISHING_GET_F_(7)
-end
-
-function FISHING_GET_CALCULATED_FISH_WEIGHT()
-    return FISHING_GET_F_(8)
-end
-
-function FISHING_GET_F_9()
-    return FISHING_GET_F_(9)
-end
-
-function FISHING_GET_SCRIPT_TIMER()
-    return FISHING_GET_F_(10)
-end
-
-function FISHING_GET_BOBBER_HANDLE()
-    return FISHING_GET_F_(11)
-end
-
-function FISHING_GET_HOOK_HANDLE()
-    return FISHING_GET_F_(12)
-end
-
-function FISHING_SET_F_(f, v)
-    fishing_minigame_struct["f_" .. f] = v
-    SET_TASK_FISHING_DATA()
-end
-
-function FISHING_SET_LINE_DISTANCE(v)
-    FISHING_SET_F_(2, v)
-end
-
-function FISHING_SET_TRANSITION_FLAG(v)
-    FISHING_SET_F_(6, v)
-end
-
-function FISHING_SET_FISH_HANDLE(v)
-    FISHING_SET_F_(7, v)
-    local weight_index = FishModelToSomeSortOfWeightIndex(GetEntityModel(v))
-
-    FISHING_SET_CALCULATED_FISH_WEIGHT(GetRandomFishWeightForWeightIndex(weight_index) / 54.25)
-
-    fishing_data.fish.rodweight = 2
-    FISHING_SET_ROD_WEIGHT(fishing_data.fish.rodweight)
-end
-
-function FISHING_SET_CALCULATED_FISH_WEIGHT(v)
-    fishing_data.fish.weight = v * 54.25
-
-    FISHING_SET_F_(8, v)
-end
-
-function FISHING_SET_ROD_WEIGHT(v)
-    FISHING_SET_F_(18, v)
-end
-
-function FISHING_SET_ROD_POSITION_LR(v)
-    FISHING_SET_F_(22, v)
-end
-
-function FISHING_SET_ROD_POSITION_UD(v)
-    FISHING_SET_F_(23, v)
-end
-
-function GetNearbyFishs(coords, radius)
-    local r = {}
-
-    local itemSet = CreateItemset(true)
-    local size = Citizen.InvokeNative(0x59B57C4B06531E1E, coords, radius, itemSet, 1, Citizen.ResultAsInteger())
-
-    if size > 0 then
-        for index = 0, size - 1 do
-            local entity = GetIndexedItemInItemset(index, itemSet)
-            local populationType = GetEntityPopulationType(entity)
-            if (populationType == 6 or populationType == 8) and not IsPedDeadOrDying(entity, 0) then
-                table.insert(r, entity)
-            end
-        end
-    end
-
-    if IsItemsetValid(itemSet) then
-        DestroyItemset(itemSet)
-    end
-
-    return r
-end
-
-function FishModelToSomeSortOfWeightIndex(fishModel)
-    if fishModel == GetHashKey("A_C_FISHBLUEGIL_01_SM") then ------Small size fish
-        return 0
-    elseif fishModel == GetHashKey("A_C_FISHBULLHEADCAT_01_SM") then
-        return 1
-    elseif fishModel == GetHashKey("A_C_FISHREDFINPICKEREL_01_SM") then
-        return 2
-    elseif fishModel == GetHashKey("A_C_FISHPERCH_01_SM") then
-        return 3
-    elseif fishModel == GetHashKey("A_C_FISHCHAINPICKEREL_01_SM") then
-        return 4
-    elseif fishModel == GetHashKey("A_C_FISHROCKBASS_01_SM") then
-        return 5
-    elseif fishModel == GetHashKey("A_C_FISHBLUEGIL_01_MS") then ------ Medium Size fish
-        return 6
-    elseif fishModel == GetHashKey("A_C_FISHBULLHEADCAT_01_MS") then
-        return 7
-    elseif fishModel == GetHashKey("A_C_FISHCHAINPICKEREL_01_MS") then
-        return 8
-    elseif fishModel == GetHashKey("A_C_FISHPERCH_01_MS") then
-        return 9
-    elseif fishModel == GetHashKey("A_C_FISHLARGEMOUTHBASS_01_MS") then
-        return 10
-    elseif fishModel == GetHashKey("A_C_FISHREDFINPICKEREL_01_MS") then
-        return 11
-    elseif fishModel == GetHashKey("A_C_FISHRAINBOWTROUT_01_MS") then
-        return 12
-    elseif fishModel == GetHashKey("A_C_FISHROCKBASS_01_MS") then
-        return 13
-    elseif fishModel == GetHashKey("A_C_FISHSALMONSOCKEYE_01_MS") then
-        return 14
-    elseif fishModel == GetHashKey("A_C_FISHSMALLMOUTHBASS_01_MS") then
-        return 15
-    elseif fishModel == GetHashKey("A_C_FISHSALMONSOCKEYE_01_ML") then   ----- Medium Large fish
-        return 16
-    elseif fishModel == GetHashKey("A_C_FISHCHANNELCATFISH_01_LG") then  ---- Large Fish
-        return 17
-    elseif fishModel == GetHashKey("A_C_FISHLAKESTURGEON_01_LG") then
-        return 18
-    elseif fishModel == GetHashKey("A_C_FISHLARGEMOUTHBASS_01_LG") then
-        return 19
-    elseif fishModel == GetHashKey("A_C_FISHLONGNOSEGAR_01_LG") then
-        return 20
-    elseif fishModel == GetHashKey("A_C_FISHMUSKIE_01_LG") then
-        return 21
-    elseif fishModel == GetHashKey("A_C_FISHNORTHERNPIKE_01_LG") then
-        return 22
-    elseif fishModel == GetHashKey("A_C_FISHRAINBOWTROUT_01_LG") then
-        return 23
-    elseif fishModel == GetHashKey("A_C_FISHSALMONSOCKEYE_01_LG") then
-        return 24
-    elseif fishModel == GetHashKey("A_C_FISHSMALLMOUTHBASS_01_LG") then
-        return 25
-    end
-end
-
-function GetMinMaxWeightForWeightIndex(index)
-    local min = 0.0
-    local max = 0.0
-
-    if index == 0 or index == 1 or index == 2 or index == 3 or index == 4 or index == 5 then -----small fish
-        min = 0.5
-        max = 5.0
-    elseif index == 17 or index == 18 or index == 20 or index == 21 or index == 22 or index == 16 then ----Large
-        min = 14.0
-        max = 20.0
-    elseif index == 19 or index == 23 or index == 24 or index == 25 then ----Legendary large
-        min = 20.0
-        max = 25.0
-    elseif index == 6 or index == 7 or index == 8 or index == 9 or index == 10 or index == 11 or index == 12 or index == 13 or index == 14 or index == 15 then  ---- Med and Legend med
-        min = 6.0
-        max = 10.0
-    end
-
-    min = min
-    max = max
-
-    return min, max
-end
-
-function GetRandomFishWeightForWeightIndex(index)
-    local min, max = GetMinMaxWeightForWeightIndex(index)
-    local weight = math.random() * (max - min) + min
-
-    return weight
-end
-
-function prepareMyPrompt()
-    fishing_data.prompt_prepare_fishing.group = GetRandomIntInRange(0, 0xffffff)
-    local prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, GetHashKey("INPUT_AIM")) -- MOUSE LEFT CLICK
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.PrepRod))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_prepare_fishing.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_prepare_fishing.change_bait = prompt
-
-    prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, 0x07CE1E61) -- LEFT CONTROL
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.ThrowHook))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_prepare_fishing.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_prepare_fishing.throw_hook = prompt
-
-
-    fishing_data.prompt_waiting_hook.group = GetRandomIntInRange(0, 0xffffff)
-    prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, GetHashKey("INPUT_ATTACK")) -- MOUSE LEFT CLICK
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.HookFish))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_waiting_hook.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_waiting_hook.hook_fish = prompt
-
-    prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, 0x8FFC75D6) -- LEFT SHIFT
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.Cancel))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_waiting_hook.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_waiting_hook.cancel = prompt
-
-    prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, 0xDB096B85) -- LEFT CONTROL
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.ReelLure))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_waiting_hook.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_waiting_hook.reel_lure = prompt
-
-    -- Puxando Peixe
-    fishing_data.prompt_hook.group = GetRandomIntInRange(0, 0xffffff)
-    prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, 0xFBD7B3E6) -- SPACE
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.ReelIn))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_hook.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_hook.reel = prompt
-
-    prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, 0x8FFC75D6) -- LEFT SHIFT
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.Cancel))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_hook.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_hook.cancel = prompt
-
-    -- Peixe Pego
-    fishing_data.prompt_finish.group = GetRandomIntInRange(0, 0xffffff)
-    prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, GetHashKey("INPUT_ATTACK")) -- MOUSE LEFT CLICK
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.KeepFish))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_finish.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_finish.keep_fish = prompt
-
-    prompt = PromptRegisterBegin()
-    PromptSetControlAction(prompt, GetHashKey("INPUT_AIM"))  -- MOUSE RIGHT CLICK
-    PromptSetText(prompt, CreateVarString(10, "LITERAL_STRING", T.ThrowFish))
-    PromptSetEnabled(prompt, true)
-    PromptSetVisible(prompt, true)
-    PromptSetHoldMode(prompt, false)
-    PromptSetGroup(prompt, fishing_data.prompt_finish.group)
-    PromptRegisterEnd(prompt)
-    fishing_data.prompt_finish.throw_fish = prompt
-end
 
 AddEventHandler("onResourceStop", function(resourceName)
     if resourceName == GetCurrentResourceName() then
