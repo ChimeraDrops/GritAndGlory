@@ -1,15 +1,6 @@
 ================================================================
-======== txAdmin v7.3.2 atop fxserver 10653 Starting - 10/29/2024, 5:50:26 PM
+======== txAdmin v7.3.2 atop fxserver 10653 Starting - 10/31/2024, 6:27:32 PM
 ================================================================
-[17:50:38][KSUIE_Gaming] logged in from 127.0.0.1 via cfxre
-[17:56:57][KSUIE_Gaming] executed "refresh"
-[17:57:04][KSUIE_Gaming] executed "ensure "ksuie_helper""
-[17:57:10][KSUIE_Gaming] executed "ensure "vorp_fishing""
-[17:58:37][KSUIE_Gaming] executed "ensure "vorp_fishing""
-[18:07:27][KSUIE_Gaming] executed "ensure "vorp_fishing""
-[18:08:48][KSUIE_Gaming] executed "ensure "vorp_fishing""
-[18:10:58][KSUIE_Gaming] executed "ensure "vorp_fishing""
-[18:11:50][KSUIE_Gaming] executed "ensure "vorp_fishing""
-[19:44:37][KSUIE_Gaming] executed "RESTART SERVER"
-[19:48:57][KSUIE_Gaming] executed "ensure "vorp_inventory""
-[19:49:13][KSUIE_Gaming] executed "RESTART SERVER"
+================================================================
+======== Log Rotated - 10/31/2024, 6:27:32 PM                   
+================================================================
