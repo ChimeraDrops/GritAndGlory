@@ -5,7 +5,8 @@ function preloadImages(images) {
     $.each(images, function (index, image) {
         const img = new Image();
         img.onload = () => {
-            imageCache[image] = `url("img/items/${image}.png");`;
+            imageCache[image] = `https://cfx-nui-vorp_inventory/html/img/items/${image}.png");`;
+            
         };
         img.onerror = () => {
             imageCache[image] = `url("img/items/placeholder.png");`;
